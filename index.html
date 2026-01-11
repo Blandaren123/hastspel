@@ -2,78 +2,691 @@
 <html lang="sv">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Emoji Hästspel 🐴💨</title>
 <style>
-  body { font-family: Arial, sans-serif; text-align: center; background: #f0f8ff; }
-  h1 { color: #ff4500; }
-  .race-track { display: flex; flex-direction: column; align-items: flex-start; margin: 20px; }
-  .horse { font-size: 2rem; margin: 10px 0; transition: transform 0.5s; }
-  input[type="number"] { width: 80px; padding: 5px; margin: 5px; }
-  button { padding: 10px 20px; font-size: 1rem; cursor: pointer; background-color: #ff6347; color: white; border: none; border-radius: 5px; }
-  .message { margin-top: 20px; font-size: 1.2rem; }
-  .score { margin-top: 10px; font-size: 1rem; color: #006400; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    text-align: center; 
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+    transition: background 1s ease;
+  }
+  body.race-active {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  }
+  body.race-finished {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  }
+  h1 { 
+    color: white; 
+    margin-bottom: 10px;
+    font-size: 3rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  }
+  
+  /* Progress Bar */
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e0e0e0;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    border: 2px solid #667eea;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    width: 0%;
+    transition: width 0.1s linear;
+  }
+
+  .betting-section {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 30px;
+    border: 2px solid #667eea;
+  }
+  .betting-section p {
+    margin-bottom: 15px;
+    font-weight: bold;
+    color: #333;
+  }
+  .input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .input-group label {
+    font-weight: 600;
+    color: #555;
+  }
+  input[type="number"], select { 
+    padding: 10px; 
+    font-size: 1rem;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    transition: border-color 0.3s;
+  }
+  input[type="number"], select {
+    min-width: 100px;
+  }
+  input[type="number"]:focus, select:focus {
+    outline: none;
+    border-color: #667eea;
+  }
+  button { 
+    padding: 12px 30px; 
+    font-size: 1.1rem; 
+    cursor: pointer; 
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white; 
+    border: none; 
+    border-radius: 8px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-weight: bold;
+  }
+  button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+  }
+  button:active:not(:disabled) {
+    transform: translateY(0);
+  }
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Race Section */
+  .race-section {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 2px solid #e0e0e0;
+    position: relative;
+  }
+  .track-container {
+    position: relative;
+    margin: 20px 0;
+  }
+  .race-track { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 15px;
+    position: relative;
+    z-index: 2;
+  }
+  .horse-row {
+    display: flex;
+    align-items: center;
+    height: 50px;
+    background: linear-gradient(to right, #f0f0f0, #ffffff);
+    border-radius: 8px;
+    position: relative;
+    overflow: visible;
+    border: 1px solid #ddd;
+  }
+  .horse { 
+    font-size: 2rem; 
+    position: absolute;
+    z-index: 3;
+    animation: bounce 0.6s infinite;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  .horse-trail {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0.7;
+  }
+  .power-up {
+    position: absolute;
+    font-size: 1.5rem;
+    animation: floatUp 1s ease-out forwards;
+    z-index: 5;
+  }
+  @keyframes floatUp {
+    0% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-40px); }
+  }
+  
+  .finish-line {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: repeating-linear-gradient(
+      45deg,
+      #000,
+      #000 10px,
+      #fff 10px,
+      #fff 20px
+    );
+    z-index: 1;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  }
+  .finish-label {
+    position: absolute;
+    right: 10px;
+    top: -25px;
+    font-weight: bold;
+    color: #000;
+    font-size: 0.9rem;
+    background: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+  }
+  .flag {
+    position: absolute;
+    right: 0;
+    top: -10px;
+    font-size: 1.5rem;
+    animation: wave 0.5s infinite;
+  }
+  @keyframes wave {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(15deg); }
+  }
+
+  /* Messages and Score */
+  .message { 
+    margin-top: 20px; 
+    font-size: 1.3rem;
+    min-height: 40px;
+    color: #333;
+    font-weight: bold;
+  }
+  .score { 
+    margin-top: 15px; 
+    font-size: 1.3rem; 
+    color: #667eea;
+    font-weight: bold;
+  }
+  .score.loss {
+    color: #e74c3c;
+  }
+  .score.win {
+    color: #27ae60;
+  }
+  .score-popup {
+    position: fixed;
+    font-size: 2rem;
+    font-weight: bold;
+    pointer-events: none;
+    animation: scoreFloat 1.5s ease-out forwards;
+    z-index: 1000;
+  }
+  @keyframes scoreFloat {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-100px) scale(1.5); }
+  }
+
+  /* History */
+  .history-section {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    border: 2px solid #667eea;
+    max-height: 250px;
+    overflow-y: auto;
+  }
+  .history-title {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  .history-item {
+    background: white;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    border-left: 4px solid #667eea;
+    text-align: left;
+    font-size: 0.9rem;
+  }
+  .history-item.win {
+    border-left-color: #27ae60;
+    background: #eafaf1;
+  }
+  .history-item.loss {
+    border-left-color: #e74c3c;
+    background: #fadbd8;
+  }
+  .empty-history {
+    color: #999;
+    font-style: italic;
+  }
+
+  /* Leaderboard */
+  .leaderboard {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 15px;
+    border: 2px solid #667eea;
+  }
+  .leaderboard-title {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  .leaderboard-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    background: white;
+    margin-bottom: 5px;
+    border-radius: 5px;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    h1 { font-size: 2rem; }
+    .container { padding: 15px; }
+    .horse { font-size: 1.5rem; }
+    .input-group {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    input[type="number"], select {
+      width: 100%;
+    }
+  }
 </style>
 </head>
 <body>
 
-<h1>Emoji Hästspel 🐴💨</h1>
+<h1>🏇 Emoji Hästspel 🐴💨</h1>
 
-<p>Satsa dina poäng på en häst (1–5):</p>
-<input type="number" id="betHorse" min="1" max="5" value="1">
-<input type="number" id="betAmount" min="1" value="10">
-<button onclick="startRace()">Starta loppet!</button>
+<div class="container">
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
 
-<div class="race-track">
-  <div class="horse" id="horse1">🐴</div>
-  <div class="horse" id="horse2">🐎</div>
-  <div class="horse" id="horse3">🦄</div>
-  <div class="horse" id="horse4">🦖</div>
-  <div class="horse" id="horse5">🐸</div>
+  <div class="betting-section">
+    <p>🎯 Satsa dina poäng på en häst:</p>
+    <div class="input-group">
+      <label>🐴 Häst:</label>
+      <select id="betHorse">
+        <option value="1">🐴 Häst 1 (Snabb)</option>
+        <option value="2">🐎 Häst 2 (Balanserad)</option>
+        <option value="3">🦄 Häst 3 (Magisk)</option>
+        <option value="4">🦖 Häst 4 (Tung)</option>
+        <option value="5">🐸 Häst 5 (Springande)</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label>💰 Insats:</label>
+      <input type="number" id="betAmount" min="1" value="10">
+      <span>poäng</span>
+    </div>
+    <button id="startBtn" onclick="startRace()">🏁 Starta loppet!</button>
+    <button id="replayBtn" style="display:none; margin-left: 10px;" onclick="resetRace()">🔄 Spela igen!</button>
+  </div>
+
+  <div class="race-section">
+    <div class="track-container">
+      <div class="race-track" id="raceTrack">
+        <div class="horse-row">
+          <div class="horse" id="horse1">🐴</div>
+          <div class="finish-line"></div>
+          <div class="flag" id="flag1">🏁</div>
+        </div>
+        <div class="horse-row">
+          <div class="horse" id="horse2">🐎</div>
+          <div class="finish-line"></div>
+          <div class="flag" id="flag2">🏁</div>
+        </div>
+        <div class="horse-row">
+          <div class="horse" id="horse3">🦄</div>
+          <div class="finish-line"></div>
+          <div class="flag" id="flag3">🏁</div>
+        </div>
+        <div class="horse-row">
+          <div class="horse" id="horse4">🦖</div>
+          <div class="finish-line"></div>
+          <div class="flag" id="flag4">🏁</div>
+        </div>
+        <div class="horse-row">
+          <div class="horse" id="horse5">🐸</div>
+          <div class="finish-line"></div>
+          <div class="flag" id="flag5">🏁</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="message" id="message"></div>
+  <div class="score" id="score">💰 Poäng: 100</div>
+
+  <div class="history-section">
+    <div class="history-title">📜 Senaste lopp:</div>
+    <div id="historyList" class="empty-history">Ingen historia ännu...</div>
+  </div>
+
+  <div class="leaderboard">
+    <div class="leaderboard-title">🏆 Personliga rekord:</div>
+    <div id="leaderboardList">
+      <div class="leaderboard-item">
+        <span>Högsta poäng:</span>
+        <span id="highScore">100</span>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div class="message" id="message"></div>
-<div class="score" id="score">Poäng: 100</div>
-
 <script>
+const horseStats = {
+  1: { name: '🐴 Häst 1', speedMultiplier: 1.1, acceleration: 0.05 },
+  2: { name: '🐎 Häst 2', speedMultiplier: 1.0, acceleration: 0 },
+  3: { name: '🦄 Häst 3', speedMultiplier: 0.9, acceleration: 0.08 },
+  4: { name: '🦖 Häst 4', speedMultiplier: 0.8, acceleration: 0.1 },
+  5: { name: '🐸 Häst 5', speedMultiplier: 1.05, acceleration: 0.03 }
+};
+
 let totalScore = 100;
+let raceHistory = [];
+let highScore = 100;
+let raceInProgress = false;
+
+// Load saved data from localStorage
+function loadData() {
+  const saved = localStorage.getItem('hastspelData');
+  if (saved) {
+    const data = JSON.parse(saved);
+    totalScore = data.totalScore || 100;
+    raceHistory = data.raceHistory || [];
+    highScore = data.highScore || 100;
+    updateUI();
+  }
+}
+
+// Save data to localStorage
+function saveData() {
+  const data = {
+    totalScore,
+    raceHistory: raceHistory.slice(-20), // Keep last 20 races
+    highScore
+  };
+  localStorage.setItem('hastspelData', JSON.stringify(data));
+}
+
+function updateUI() {
+  document.getElementById('score').textContent = `💰 Poäng: ${totalScore}`;
+  document.getElementById('highScore').textContent = highScore;
+  updateHistory();
+}
+
+function updateHistory() {
+  const historyList = document.getElementById('historyList');
+  if (raceHistory.length === 0) {
+    historyList.innerHTML = '<div class="empty-history">Ingen historia ännu...</div>';
+    return;
+  }
+  
+  historyList.innerHTML = raceHistory.slice(-5).reverse().map((item, i) => `
+    <div class="history-item ${item.won ? 'win' : 'loss'}">
+      <strong>${item.winnerName}</strong> vann | Satsade på ${item.horseNameBet} | 
+      <span style="color: ${item.won ? '#27ae60' : '#e74c3c'};">
+        ${item.won ? '+' : '-'}${item.amount} 💰
+      </span>
+    </div>
+  `).join('');
+}
+
+function playSound(type) {
+  // Simple beep sounds using Web Audio API
+  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  const oscillator = audioContext.createOscillator();
+  const gainNode = audioContext.createGain();
+  
+  oscillator.connect(gainNode);
+  gainNode.connect(audioContext.destination);
+  
+  if (type === 'start') {
+    oscillator.frequency.value = 800;
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.2);
+  } else if (type === 'win') {
+    oscillator.frequency.value = 800;
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.1);
+    
+    setTimeout(() => {
+      const osc2 = audioContext.createOscillator();
+      const gain2 = audioContext.createGain();
+      osc2.connect(gain2);
+      gain2.connect(audioContext.destination);
+      osc2.frequency.value = 1000;
+      gain2.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gain2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+      osc2.start(audioContext.currentTime);
+      osc2.stop(audioContext.currentTime + 0.1);
+    }, 100);
+  } else if (type === 'loss') {
+    oscillator.frequency.value = 300;
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.3);
+  }
+}
+
+function createTrail(x, y, color) {
+  const trail = document.createElement('div');
+  trail.className = 'horse-trail';
+  trail.style.left = x + 'px';
+  trail.style.top = y + 'px';
+  trail.style.backgroundColor = color;
+  document.getElementById('raceTrack').appendChild(trail);
+  setTimeout(() => trail.remove(), 1000);
+}
+
+function createScorePopup(points, x, y) {
+  const popup = document.createElement('div');
+  popup.className = 'score-popup';
+  popup.textContent = (points > 0 ? '+' : '') + points;
+  popup.style.left = x + 'px';
+  popup.style.top = y + 'px';
+  popup.style.color = points > 0 ? '#27ae60' : '#e74c3c';
+  document.body.appendChild(popup);
+  setTimeout(() => popup.remove(), 1500);
+}
 
 function startRace() {
   const betHorse = Number(document.getElementById("betHorse").value);
   const betAmount = Number(document.getElementById("betAmount").value);
+  
+  if (betAmount <= 0) {
+    alert("Insatsen måste vara större än 0!");
+    return;
+  }
+  
   if (betAmount > totalScore) {
     alert("Du har inte tillräckligt med poäng!");
     return;
   }
 
-  document.getElementById("message").textContent = "Loppet pågår...";
+  if (raceInProgress) return;
+  raceInProgress = true;
+
+  const startBtn = document.getElementById("startBtn");
+  const replayBtn = document.getElementById("replayBtn");
+  startBtn.disabled = true;
+  replayBtn.style.display = 'none';
+
+  // Change background
+  document.body.className = 'race-active';
+
+  // Play start sound
+  playSound('start');
+  
+  document.getElementById("message").textContent = "🏁🎺 Startskottet! Loppet är igång...";
+  document.getElementById("message").style.color = "#f39c12";
   
   // Reset hästpositioner
   for(let i=1;i<=5;i++) {
     document.getElementById("horse"+i).style.transform = "translateX(0px)";
+    document.getElementById("horse"+i).style.animation = "bounce 0.6s infinite";
   }
 
   let positions = [0,0,0,0,0];
-  let interval = setInterval(() => {
-    let finished = false;
-    for(let i=0;i<5;i++){
-      positions[i] += Math.random()*30; // slumpad fart
-      document.getElementById("horse"+(i+1)).style.transform = `translateX(${positions[i]}px)`;
-      if (positions[i] >= 300) finished = true;
-    }
-    if(finished){
-      clearInterval(interval);
-      const winner = positions.indexOf(Math.max(...positions)) + 1;
-      if(betHorse === winner){
-        totalScore += betAmount;
-        document.getElementById("message").textContent = `Grattis! Häst ${winner} vann! Du vann ${betAmount} poäng 🎉`;
-      } else {
-        totalScore -= betAmount;
-        document.getElementById("message").textContent = `Tyvärr! Häst ${winner} vann. Du förlorade ${betAmount} poäng 😢`;
+  let speeds = [0,0,0,0,0];
+  let powerUpActivated = [false, false, false, false, false];
+  let finished = false;
+  const maxDistance = 650;
+  let raceDuration = 0;
+  
+  const interval = setInterval(() => {
+    if (finished) return;
+    
+    raceDuration++;
+    
+    for(let i=0; i<5; i++){
+      if (positions[i] >= maxDistance) continue;
+      
+      const stats = horseStats[i + 1];
+      const baseSpeed = Math.random() * 25 * stats.speedMultiplier;
+      speeds[i] = baseSpeed + (speeds[i] * stats.acceleration);
+      positions[i] += speeds[i];
+      
+      // Power-up chance (5% per frame)
+      if (Math.random() < 0.05 && !powerUpActivated[i]) {
+        powerUpActivated[i] = true;
+        positions[i] += 50; // Boost
+        const horse = document.getElementById("horse"+(i+1));
+        const rect = horse.getBoundingClientRect();
+        createPowerUpEffect(rect.left, rect.top);
       }
-      document.getElementById("score").textContent = `Poäng: ${totalScore}`;
+      
+      const horse = document.getElementById("horse"+(i+1));
+      horse.style.transform = `translateX(${positions[i]}px)`;
+      
+      // Trail effect
+      if (raceDuration % 3 === 0) {
+        const colors = ['#667eea', '#764ba2', '#f093fb'];
+        createTrail(positions[i], i * 80 + 20, colors[i % 3]);
+      }
+      
+      // Check if horse finished
+      if (positions[i] >= maxDistance) {
+        const flag = document.getElementById("flag" + (i+1));
+        flag.style.animation = "wave 0.3s infinite";
+        horse.style.animation = "none";
+      }
     }
-  }, 200);
+    
+    // Check if any horse finished
+    if (Math.max(...positions) >= maxDistance && !finished) {
+      finished = true;
+      clearInterval(interval);
+      
+      setTimeout(() => {
+        document.body.className = 'race-finished';
+        const winner = positions.indexOf(Math.max(...positions)) + 1;
+        const winnerName = horseStats[winner].name;
+        
+        if(betHorse === winner){
+          totalScore += betAmount;
+          document.getElementById("message").textContent = `🎉🎊 GRATTIS! ${winnerName} vann! Du vann ${betAmount} poäng! 🥳`;
+          document.getElementById("message").style.color = "#27ae60";
+          document.getElementById("score").className = "score win";
+          playSound('win');
+          
+          raceHistory.push({
+            won: true,
+            winnerName,
+            horseNameBet: horseStats[betHorse].name,
+            amount: betAmount
+          });
+        } else {
+          totalScore -= betAmount;
+          document.getElementById("message").textContent = `😢 Tyvärr... ${winnerName} vann. Du förlorade ${betAmount} poäng...`;
+          document.getElementById("message").style.color = "#e74c3c";
+          document.getElementById("score").className = "score loss";
+          playSound('loss');
+          
+          raceHistory.push({
+            won: false,
+            winnerName,
+            horseNameBet: horseStats[betHorse].name,
+            amount: betAmount
+          });
+        }
+        
+        // Update high score
+        if (totalScore > highScore) {
+          highScore = totalScore;
+        }
+        
+        // Progress bar animation
+        const progressFill = document.getElementById('progressFill');
+        progressFill.style.width = ((winner * 20) % 100) + '%';
+        
+        updateUI();
+        saveData();
+        
+        startBtn.disabled = false;
+        replayBtn.style.display = 'inline-block';
+        raceInProgress = false;
+        
+        createScorePopup((betHorse === winner ? betAmount : -betAmount), window.innerWidth / 2, 200);
+      }, 600);
+    }
+  }, 50);
 }
+
+function createPowerUpEffect(x, y) {
+  const powerUps = ['⚡', '🚀', '✨', '💥'];
+  const powerUp = document.createElement('div');
+  powerUp.className = 'power-up';
+  powerUp.textContent = powerUps[Math.floor(Math.random() * powerUps.length)];
+  powerUp.style.left = x + 'px';
+  powerUp.style.top = y + 'px';
+  document.body.appendChild(powerUp);
+  setTimeout(() => powerUp.remove(), 1000);
+}
+
+function resetRace() {
+  document.body.className = '';
+  document.getElementById("message").textContent = '';
+  for(let i=1;i<=5;i++) {
+    document.getElementById("horse"+i).style.animation = "none";
+    document.getElementById("flag"+i).style.animation = "none";
+  }
+  document.getElementById('score').className = 'score';
+}
+
+// Initialize
+loadData();
 </script>
 
 </body>
