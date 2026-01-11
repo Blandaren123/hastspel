@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐴 Hästspel - Meme Racing!</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏁 MEME HÄSTSPEL 🏁</h1>
+            <div class="stats">
+                <div class="coins">💰 Coins: <span id="coins">100</span></div>
+                <div class="total-score">🏆 Totala poäng: <span id="totalScore">0</span></div>
+            </div>
+        </header>
+
+        <main>
+            <!-- Horse Selection -->
+            <section class="selection-area" id="selectionArea">
+                <h2>Välj din meme-häst! 🎮</h2>
+                <div class="horses-grid">
+                    <div class="horse-card" data-horse="0">
+                        <div class="horse-emoji">🐴</div>
+                        <div class="horse-name">Classic</div>
+                    </div>
+                    <div class="horse-card" data-horse="1">
+                        <div class="horse-emoji">🦄</div>
+                        <div class="horse-name">Unicorn</div>
+                    </div>
+                    <div class="horse-card" data-horse="2">
+                        <div class="horse-emoji">🐸</div>
+                        <div class="horse-name">Pepe</div>
+                    </div>
+                    <div class="horse-card" data-horse="3">
+                        <div class="horse-emoji">🦖</div>
+                        <div class="horse-name">Dino</div>
+                    </div>
+                    <div class="horse-card" data-horse="4">
+                        <div class="horse-emoji">🐉</div>
+                        <div class="horse-name">Dragon</div>
+                    </div>
+                    <div class="horse-card" data-horse="5">
+                        <div class="horse-emoji">🦅</div>
+                        <div class="horse-name">Eagle</div>
+                    </div>
+                </div>
+
+                <div class="betting-area">
+                    <h3>Hur mycket satsar du? 💸</h3>
+                    <div class="bet-buttons">
+                        <button class="bet-btn" data-bet="10">10 coins</button>
+                        <button class="bet-btn" data-bet="25">25 coins</button>
+                        <button class="bet-btn" data-bet="50">50 coins</button>
+                        <button class="bet-btn all-in" data-bet="all">ALL IN! 🔥</button>
+                    </div>
+                    <div class="current-bet">Vald satsning: <span id="currentBet">0</span> coins</div>
+                </div>
+
+                <button class="start-race-btn" id="startRaceBtn" disabled>🏁 STARTA LOPPET!</button>
+            </section>
+
+            <!-- Race Track -->
+            <section class="race-area hidden" id="raceArea">
+                <h2>🏁 LOPPET ÄR IGÅNG! 🏁</h2>
+                <div class="race-track">
+                    <div class="lane" data-lane="0">
+                        <div class="runner" data-runner="0">
+                            <span class="runner-emoji">🐴</span>
+                            <span class="speed-effect">💨</span>
+                        </div>
+                        <div class="finish-line">🏁</div>
+                    </div>
+                    <div class="lane" data-lane="1">
+                        <div class="runner" data-runner="1">
+                            <span class="runner-emoji">🦄</span>
+                            <span class="speed-effect">💨</span>
+                        </div>
+                        <div class="finish-line">🏁</div>
+                    </div>
+                    <div class="lane" data-lane="2">
+                        <div class="runner" data-runner="2">
+                            <span class="runner-emoji">🐸</span>
+                            <span class="speed-effect">💨</span>
+                        </div>
+                        <div class="finish-line">🏁</div>
+                    </div>
+                    <div class="lane" data-lane="3">
+                        <div class="runner" data-runner="3">
+                            <span class="runner-emoji">🦖</span>
+                            <span class="speed-effect">💨</span>
+                        </div>
+                        <div class="finish-line">🏁</div>
+                    </div>
+                    <div class="lane" data-lane="4">
+                        <div class="runner" data-runner="4">
+                            <span class="runner-emoji">🐉</span>
+                            <span class="speed-effect">💨</span>
+                        </div>
+                        <div class="finish-line">🏁</div>
+                    </div>
+                    <div class="lane" data-lane="5">
+                        <div class="runner" data-runner="5">
+                            <span class="runner-emoji">🦅</span>
+                            <span class="speed-effect">💨</span>
+                        </div>
+                        <div class="finish-line">🏁</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Result Area -->
+            <section class="result-area hidden" id="resultArea">
+                <div class="result-card">
+                    <h2 id="resultTitle"></h2>
+                    <div class="winner-display" id="winnerDisplay"></div>
+                    <div class="result-message" id="resultMessage"></div>
+                    <button class="play-again-btn" id="playAgainBtn">🎮 Spela igen!</button>
+                </div>
+            </section>
+
+            <!-- Leaderboard -->
+            <section class="leaderboard">
+                <h2>🏆 LEADERBOARD</h2>
+                <div class="leaderboard-content" id="leaderboardContent">
+                    <p class="no-races">Inga lopp än! Starta ditt första race! 🚀</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
