@@ -35,23 +35,35 @@ const playAgainBtn = document.getElementById('playAgainBtn');
 const leaderboardContent = document.getElementById('leaderboardContent');
 
 // Sound effects (using Web Audio API)
-const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+let audioContext = null;
+
+function getAudioContext() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    return audioContext;
+}
 
 function playSound(frequency, duration, type = 'sine') {
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-    
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    
-    oscillator.frequency.value = frequency;
-    oscillator.type = type;
-    
-    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
-    
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + duration);
+    try {
+        const ctx = getAudioContext();
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+        
+        oscillator.frequency.value = frequency;
+        oscillator.type = type;
+        
+        gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+        
+        oscillator.start(ctx.currentTime);
+        oscillator.stop(ctx.currentTime + duration);
+    } catch (e) {
+        // Silently fail if audio is not available
+    }
 }
 
 function playRaceSound() {
@@ -83,6 +95,21 @@ function playLoseSound() {
     });
 }
 
+// Notification system
+function showMessage(message, type = 'error', duration = 3000) {
+    const toast = document.getElementById('notificationToast');
+    toast.textContent = message;
+    toast.className = 'notification-toast';
+    if (type === 'success') {
+        toast.classList.add('success');
+    }
+    toast.classList.remove('hidden');
+    
+    setTimeout(() => {
+        toast.classList.add('hidden');
+    }, duration);
+}
+
 // Initialize
 function init() {
     updateDisplay();
@@ -106,7 +133,7 @@ function attachEventListeners() {
     betButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             const betAmount = btn.dataset.bet;
-            selectBet(betAmount);
+            selectBet(betAmount, btn);
         });
     });
     
@@ -130,7 +157,7 @@ function selectHorse(index) {
     playSound(440, 0.1);
 }
 
-function selectBet(betAmount) {
+function selectBet(betAmount, buttonElement) {
     if (gameState.isRacing) return;
     
     let bet;
@@ -141,7 +168,7 @@ function selectBet(betAmount) {
     }
     
     if (bet > gameState.coins) {
-        alert('Du har inte så många coins! 💸');
+        showMessage('Du har inte så många coins! 💸');
         return;
     }
     
@@ -150,7 +177,7 @@ function selectBet(betAmount) {
     
     // Update UI
     betButtons.forEach(btn => btn.classList.remove('selected'));
-    event.target.classList.add('selected');
+    buttonElement.classList.add('selected');
     
     checkCanStartRace();
     playSound(523, 0.1);
@@ -263,7 +290,7 @@ function showResult(winnerIndex) {
     // Check if out of coins
     if (gameState.coins === 0) {
         setTimeout(() => {
-            alert('Game Over! Du har inga coins kvar! 😭\nDu får 50 nya coins för att fortsätta spela! 🎮');
+            showMessage('Game Over! Du har inga coins kvar! 😭 Du får 50 nya coins för att fortsätta spela! 🎮', 'success', 5000);
             gameState.coins = 50;
             updateDisplay();
         }, 2000);
