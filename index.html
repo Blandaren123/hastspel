@@ -136,18 +136,28 @@
   .horse-row {
     display: flex;
     align-items: center;
-    height: 50px;
+    height: 60px;
     background: linear-gradient(to right, #f0f0f0, #ffffff);
     border-radius: 8px;
     position: relative;
     overflow: visible;
-    border: 1px solid #ddd;
+    border: 2px solid #ddd;
+    padding-left: 10px;
+    margin-bottom: 10px;
+  }
+  .horse-row:nth-child(odd) {
+    background: linear-gradient(to right, #fafafa, #ffffff);
+  }
+  .horse-row:nth-child(even) {
+    background: linear-gradient(to right, #f0f0f0, #ffffff);
   }
   .horse { 
-    font-size: 2rem; 
+    font-size: 2.5rem; 
     position: absolute;
+    left: 10px;
     z-index: 3;
-    animation: bounce 0.6s infinite;
+    animation: bounce 0.4s infinite;
+    text-shadow: 0 0 10px rgba(0,0,0,0.1);
   }
   @keyframes bounce {
     0%, 100% { transform: translateY(0); }
@@ -177,7 +187,7 @@
     right: 0;
     top: 0;
     bottom: 0;
-    width: 4px;
+    width: 3px;
     background: repeating-linear-gradient(
       45deg,
       #000,
@@ -186,7 +196,7 @@
       #fff 20px
     );
     z-index: 1;
-    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
   }
   .finish-label {
     position: absolute;
@@ -303,7 +313,285 @@
     border-radius: 5px;
   }
 
-  /* Responsive */
+  /* Achievements */
+  .achievements {
+    background: #fff3cd;
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 15px;
+    border: 2px solid #ffc107;
+  }
+  .achievements-title {
+    font-weight: bold;
+    color: #856404;
+    margin-bottom: 10px;
+  }
+  .achievement-badge {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    margin: 5px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    cursor: help;
+    transition: transform 0.3s;
+    border: 2px solid white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  }
+  .achievement-badge:hover {
+    transform: scale(1.1);
+  }
+  .achievement-badge.locked {
+    background: #ccc;
+    opacity: 0.5;
+  }
+  /* Daily Bonus */
+  .daily-bonus {
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 3px solid #ffa500;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s;
+    box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+  }
+  .daily-bonus:hover {
+    transform: scale(1.02);
+  }
+  .daily-bonus.claimed {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  .bonus-emoji {
+    font-size: 3rem;
+    margin-bottom: 10px;
+  }
+  .bonus-label {
+    font-weight: bold;
+    color: #856404;
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+  }
+  .bonus-amount {
+    font-size: 2rem;
+    color: #ff6b00;
+    font-weight: bold;
+  }
+
+  /* Win Multiplier */
+  .multiplier-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #f5576c, #f093fb);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    margin: 5px;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+  }
+
+  /* Lucky Wheel */
+  .lucky-wheel-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s;
+  }
+  .lucky-wheel-modal.active {
+    display: flex;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .wheel-container {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+    max-width: 400px;
+  }
+  .wheel {
+    width: 300px;
+    height: 300px;
+    margin: 20px auto;
+    border-radius: 50%;
+    border: 8px solid #667eea;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    background: conic-gradient(#ff6b6b, #4ecdc4, #ffe66d, #95e1d3, #f38181);
+    animation: spin 2s linear;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+  .wheel.spinning {
+    animation: spin 0.1s linear infinite;
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .wheel-arrow {
+    position: absolute;
+    top: -15px;
+    font-size: 2rem;
+  }
+
+  /* Combo System */
+  .combo-counter {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #f5576c, #f093fb);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    box-shadow: 0 5px 20px rgba(245, 87, 108, 0.4);
+    z-index: 100;
+    min-width: 100px;
+    text-align: center;
+  }
+
+  /* Level Progress */
+  .level-container {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .level-title {
+    font-size: 0.9rem;
+    opacity: 0.9;
+  }
+  .level-display {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 5px 0;
+  }
+  .level-bar {
+    width: 100%;
+    height: 10px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 10px;
+  }
+  .level-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4ecdc4, #44af69);
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  /* Challenges */
+  .challenges {
+    background: #f0f7ff;
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 15px;
+    border: 2px solid #667eea;
+  }
+  .challenges-title {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  .challenge-item {
+    background: white;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 4px solid #667eea;
+  }
+  .challenge-item.completed {
+    background: #d4edda;
+    border-left-color: #28a745;
+  }
+  .challenge-text {
+    flex: 1;
+  }
+  .challenge-reward {
+    background: #667eea;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: bold;
+  }
+  .streak-container {
+    background: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+    border: 2px solid #f5576c;
+  }
+  .streak-label {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+  }
+  .streak-count {
+    font-size: 2rem;
+    color: #f5576c;
+    font-weight: bold;
+  }
+
+  /* Odds Display */
+  .odds-display {
+    background: #e8f4f8;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 2px solid #667eea;
+  }
+  .odds-title {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  .odds-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    background: white;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    align-items: center;
+  }
+  .horse-name {
+    font-weight: 600;
+  }
+  .odds-value {
+    background: #667eea;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+  }
   @media (max-width: 600px) {
     h1 { font-size: 2rem; }
     .container { padding: 15px; }
@@ -322,13 +610,29 @@
 
 <h1>🏇 Emoji Hästspel 🐴💨</h1>
 
+<div class="combo-counter" id="comboCounter" style="display:none;">
+  🔥 COMBO x<span id="comboNum">0</span>
+</div>
+
 <div class="container">
-  <div class="progress-bar">
-    <div class="progress-fill" id="progressFill"></div>
+  <div class="level-container">
+    <div class="level-title">📊 LEVEL</div>
+    <div class="level-display" id="levelDisplay">1</div>
+    <div class="level-bar">
+      <div class="level-fill" id="levelFill" style="width: 0%;"></div>
+    </div>
+    <div style="font-size: 0.85rem; margin-top: 5px;" id="levelProgress">0/100 XP</div>
+  </div>
+
+  <div class="daily-bonus" id="dailyBonus" onclick="claimDailyBonus()">
+    <div class="bonus-emoji" id="bonusEmoji">🎁</div>
+    <div class="bonus-label">DAGLIG BONUS</div>
+    <div class="bonus-amount" id="bonusAmount">+100 💰</div>
   </div>
 
   <div class="betting-section">
     <p>🎯 Satsa dina poäng på en häst:</p>
+    <div style="margin-bottom: 15px;" id="multiplierDisplay"></div>
     <div class="input-group">
       <label>🐴 Häst:</label>
       <select id="betHorse">
@@ -346,6 +650,7 @@
     </div>
     <button id="startBtn" onclick="startRace()">🏁 Starta loppet!</button>
     <button id="replayBtn" style="display:none; margin-left: 10px;" onclick="resetRace()">🔄 Spela igen!</button>
+    <button id="luckyWheelBtn" style="display:none; margin-left: 10px; background: linear-gradient(135deg, #ffd700, #ffed4e); color: #333;" onclick="spinLuckyWheel()">🎡 Lucky Spin!</button>
   </div>
 
   <div class="race-section">
@@ -388,6 +693,16 @@
     <div id="historyList" class="empty-history">Ingen historia ännu...</div>
   </div>
 
+  <div class="odds-display" id="oddsDisplay">
+    <div class="odds-title">📊 Vinstchanser (baserat på historia):</div>
+    <div id="oddsList"></div>
+  </div>
+
+  <div class="streak-container" id="streakContainer" style="display:none;">
+    <div class="streak-label">🔥 Vinststreck:</div>
+    <div class="streak-count" id="streakCount">0</div>
+  </div>
+
   <div class="leaderboard">
     <div class="leaderboard-title">🏆 Personliga rekord:</div>
     <div id="leaderboardList">
@@ -395,23 +710,62 @@
         <span>Högsta poäng:</span>
         <span id="highScore">100</span>
       </div>
+      <div class="leaderboard-item">
+        <span>Totala lopp:</span>
+        <span id="totalRaces">0</span>
+      </div>
+      <div class="leaderboard-item">
+        <span>Vunna lopp:</span>
+        <span id="racesWon">0</span>
+      </div>
     </div>
+  </div>
+
+  <div class="challenges">
+    <div class="challenges-title">🎯 DAGLIGA UTMANINGAR:</div>
+    <div id="challengesList"></div>
+  </div>
+
+  <div class="achievements">
+    <div class="achievements-title">🏅 Prestationer:</div>
+    <div id="achievementsContainer"></div>
+  </div>
+</div>
+
+<!-- Lucky Wheel Modal -->
+<div class="lucky-wheel-modal" id="luckyWheelModal">
+  <div class="wheel-container">
+    <h2>🎡 LUCKY WHEEL!</h2>
+    <div style="position: relative; display: inline-block;">
+      <div class="wheel-arrow">▼</div>
+      <div class="wheel" id="wheelSpinner">🎁</div>
+    </div>
+    <button onclick="closeLuckyWheel()" style="margin-top: 20px; background: #667eea;">Stäng</button>
   </div>
 </div>
 
 <script>
 const horseStats = {
-  1: { name: '🐴 Häst 1', speedMultiplier: 1.1, acceleration: 0.05 },
-  2: { name: '🐎 Häst 2', speedMultiplier: 1.0, acceleration: 0 },
-  3: { name: '🦄 Häst 3', speedMultiplier: 0.9, acceleration: 0.08 },
-  4: { name: '🦖 Häst 4', speedMultiplier: 0.8, acceleration: 0.1 },
-  5: { name: '🐸 Häst 5', speedMultiplier: 1.05, acceleration: 0.03 }
+  1: { name: '🐴 Häst 1', speedMultiplier: 1.0, acceleration: 0.02 },
+  2: { name: '🐎 Häst 2', speedMultiplier: 1.0, acceleration: 0.02 },
+  3: { name: '🦄 Häst 3', speedMultiplier: 1.0, acceleration: 0.02 },
+  4: { name: '🦖 Häst 4', speedMultiplier: 1.0, acceleration: 0.02 },
+  5: { name: '🐸 Häst 5', speedMultiplier: 1.0, acceleration: 0.02 }
 };
 
 let totalScore = 100;
 let raceHistory = [];
 let highScore = 100;
 let raceInProgress = false;
+let currentWinStreak = 0;
+let totalRacesPlayed = 0;
+let totalRacesWon = 0;
+let horseWins = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+let playerLevel = 1;
+let playerXP = 0;
+let winMultiplier = 1.0;
+let lastBonusDate = null;
+let dailyBonusClaimed = false;
 
 // Load saved data from localStorage
 function loadData() {
@@ -421,7 +775,15 @@ function loadData() {
     totalScore = data.totalScore || 100;
     raceHistory = data.raceHistory || [];
     highScore = data.highScore || 100;
+    currentWinStreak = data.currentWinStreak || 0;
+    totalRacesPlayed = data.totalRacesPlayed || 0;
+    totalRacesWon = data.totalRacesWon || 0;
+    horseWins = data.horseWins || { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    playerLevel = data.playerLevel || 1;
+    playerXP = data.playerXP || 0;
+    lastBonusDate = data.lastBonusDate || null;
     updateUI();
+    checkDailyBonus();
   }
 }
 
@@ -429,8 +791,16 @@ function loadData() {
 function saveData() {
   const data = {
     totalScore,
-    raceHistory: raceHistory.slice(-20), // Keep last 20 races
-    highScore
+    raceHistory: raceHistory.slice(-20),
+    highScore,
+    currentWinStreak,
+    totalRacesPlayed,
+    totalRacesWon,
+    horseWins,
+    playerLevel,
+    playerXP,
+    lastBonusDate,
+    dailyBonusClaimed
   };
   localStorage.setItem('hastspelData', JSON.stringify(data));
 }
@@ -438,7 +808,41 @@ function saveData() {
 function updateUI() {
   document.getElementById('score').textContent = `💰 Poäng: ${totalScore}`;
   document.getElementById('highScore').textContent = highScore;
+  document.getElementById('totalRaces').textContent = totalRacesPlayed;
+  document.getElementById('racesWon').textContent = totalRacesWon;
+  
+  // Update level
+  const xpPerLevel = 100;
+  const nextLevelXP = xpPerLevel * playerLevel;
+  const levelProgress = (playerXP % xpPerLevel);
+  document.getElementById('levelDisplay').textContent = playerLevel;
+  document.getElementById('levelFill').style.width = ((levelProgress / xpPerLevel) * 100) + '%';
+  document.getElementById('levelProgress').textContent = `${levelProgress}/${xpPerLevel} XP`;
+  
+  // Update multiplier display
+  const multDisplay = document.getElementById('multiplierDisplay');
+  if (winMultiplier > 1.0) {
+    multDisplay.innerHTML = `<span class="multiplier-badge">💥 VINSTMULTIPLIKATOR x${winMultiplier.toFixed(1)}</span>`;
+  } else {
+    multDisplay.innerHTML = '';
+  }
+  
+  if (currentWinStreak > 0) {
+    document.getElementById('streakContainer').style.display = 'block';
+    document.getElementById('streakCount').textContent = currentWinStreak;
+    document.getElementById('comboCounter').style.display = 'block';
+    document.getElementById('comboNum').textContent = currentWinStreak;
+    winMultiplier = 1.0 + (currentWinStreak * 0.1); // +10% per win
+  } else {
+    document.getElementById('streakContainer').style.display = 'none';
+    document.getElementById('comboCounter').style.display = 'none';
+    winMultiplier = 1.0;
+  }
+  
   updateHistory();
+  updateOdds();
+  updateAchievements();
+  updateChallenges();
 }
 
 function updateHistory() {
@@ -454,6 +858,49 @@ function updateHistory() {
       <span style="color: ${item.won ? '#27ae60' : '#e74c3c'};">
         ${item.won ? '+' : '-'}${item.amount} 💰
       </span>
+    </div>
+  `).join('');
+}
+
+function updateOdds() {
+  const oddsList = document.getElementById('oddsList');
+  if (totalRacesPlayed === 0) {
+    oddsList.innerHTML = '<div style="color: #999; font-style: italic;">Spelade första loppet för att se odds...</div>';
+    return;
+  }
+  
+  oddsList.innerHTML = [1, 2, 3, 4, 5].map(i => {
+    const wins = horseWins[i];
+    const winRate = totalRacesPlayed > 0 ? ((wins / totalRacesPlayed) * 100).toFixed(1) : 0;
+    return `
+      <div class="odds-row">
+        <span class="horse-name">${horseStats[i].name}</span>
+        <span class="odds-value">${winRate}% vinnare (${wins}/${totalRacesPlayed})</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function updateAchievements() {
+  const achievements = [
+    { id: 'first', emoji: '🎯', label: 'Första segern', condition: totalRacesWon >= 1 },
+    { id: 'five', emoji: '⭐', label: '5 segrar', condition: totalRacesWon >= 5 },
+    { id: 'ten', emoji: '🌟', label: '10 segrar', condition: totalRacesWon >= 10 },
+    { id: 'twenty', emoji: '👑', label: '20 segrar', condition: totalRacesWon >= 20 },
+    { id: 'streak3', emoji: '🔥', label: '3 i rad', condition: currentWinStreak >= 3 },
+    { id: 'streak5', emoji: '🚀', label: '5 i rad', condition: currentWinStreak >= 5 },
+    { id: 'thousand', emoji: '💰', label: '1000 poäng', condition: totalScore >= 1000 },
+    { id: 'allWon', emoji: '🏆', label: 'Alla hästar', condition: Object.values(horseWins).every(w => w > 0) },
+    { id: 'level5', emoji: '⬆️', label: 'Level 5', condition: playerLevel >= 5 },
+    { id: 'rich', emoji: '💎', label: '5000 poäng', condition: totalScore >= 5000 },
+  ];
+  
+  const container = document.getElementById('achievementsContainer');
+  container.innerHTML = achievements.map(a => `
+    <div class="achievement-badge ${!a.condition ? 'locked' : ''}" 
+         title="${a.label}" 
+         style="background: ${a.condition ? 'linear-gradient(135deg, #667eea, #764ba2)' : '#ccc'}">
+      ${a.emoji}
     </div>
   `).join('');
 }
@@ -521,6 +968,132 @@ function createScorePopup(points, x, y) {
   setTimeout(() => popup.remove(), 1500);
 }
 
+function createConfetti() {
+  const confettiPieces = 30;
+  for (let i = 0; i < confettiPieces; i++) {
+    setTimeout(() => {
+      const confetti = document.createElement('div');
+      confetti.style.position = 'fixed';
+      confetti.style.width = '10px';
+      confetti.style.height = '10px';
+      confetti.style.left = Math.random() * window.innerWidth + 'px';
+      confetti.style.top = '-10px';
+      confetti.style.pointerEvents = 'none';
+      confetti.style.zIndex = '9999';
+      const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#00d4ff'];
+      confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      confetti.style.borderRadius = '50%';
+      confetti.style.animation = `fall ${2 + Math.random()}s linear forwards`;
+      document.body.appendChild(confetti);
+      setTimeout(() => confetti.remove(), 3000);
+    }, i * 30);
+  }
+}
+
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes fall {
+    to { transform: translateY(${window.innerHeight + 20}px) rotate(360deg); opacity: 0; }
+  }
+`;
+document.head.appendChild(style);
+
+function checkDailyBonus() {
+  const today = new Date().toDateString();
+  if (lastBonusDate !== today) {
+    dailyBonusClaimed = false;
+    document.getElementById('dailyBonus').classList.remove('claimed');
+    lastBonusDate = today;
+  } else if (dailyBonusClaimed) {
+    document.getElementById('dailyBonus').classList.add('claimed');
+  }
+}
+
+function claimDailyBonus() {
+  if (dailyBonusClaimed) {
+    alert('Du har redan hämtat daglig bonus! Kom tillbaka imorgon! 🌙');
+    return;
+  }
+  
+  const bonusAmount = 50 + (playerLevel * 10); // Bonus scales with level
+  totalScore += bonusAmount;
+  dailyBonusClaimed = true;
+  lastBonusDate = new Date().toDateString();
+  document.getElementById('dailyBonus').classList.add('claimed');
+  
+  showFloatingMessage(`+${bonusAmount} DAGLIG BONUS!`, '#ffd700');
+  saveData();
+  updateUI();
+}
+
+function showFloatingMessage(text, color) {
+  const msg = document.createElement('div');
+  msg.textContent = text;
+  msg.style.position = 'fixed';
+  msg.style.top = '50%';
+  msg.style.left = '50%';
+  msg.style.transform = 'translate(-50%, -50%)';
+  msg.style.fontSize = '2rem';
+  msg.style.fontWeight = 'bold';
+  msg.style.color = color;
+  msg.style.textShadow = '2px 2px 4px rgba(0,0,0,0.3)';
+  msg.style.zIndex = '999';
+  msg.style.animation = 'scoreFloat 1.5s ease-out forwards';
+  document.body.appendChild(msg);
+  setTimeout(() => msg.remove(), 1500);
+}
+
+function updateChallenges() {
+  const challenges = [
+    { name: '🎯 Vinn 3 lopp', condition: totalRacesWon >= 3, reward: 100 },
+    { name: '🔥 3 i rad', condition: currentWinStreak >= 3, reward: 200 },
+    { name: '💰 Tjäna 500 poäng', condition: totalScore >= 500, reward: 150 },
+    { name: '👑 Level 3', condition: playerLevel >= 3, reward: 200 },
+  ];
+  
+  const container = document.getElementById('challengesList');
+  container.innerHTML = challenges.map(c => `
+    <div class="challenge-item ${c.condition ? 'completed' : ''}">
+      <div class="challenge-text">${c.name}</div>
+      <div class="challenge-reward">+${c.reward} XP</div>
+    </div>
+  `).join('');
+}
+
+function spinLuckyWheel() {
+  const modal = document.getElementById('luckyWheelModal');
+  modal.classList.add('active');
+  
+  const wheel = document.getElementById('wheelSpinner');
+  wheel.classList.add('spinning');
+  
+  const prizes = [50, 100, 200, 300, -50, 75, 150, 250];
+  const randomDelay = 2000 + Math.random() * 2000;
+  
+  setTimeout(() => {
+    wheel.classList.remove('spinning');
+    const prize = prizes[Math.floor(Math.random() * prizes.length)];
+    
+    setTimeout(() => {
+      if (prize > 0) {
+        totalScore += prize;
+        alert(`🎉 DU VANN ${prize} POÄNG! 🎉`);
+        createConfetti();
+      } else {
+        totalScore = Math.max(0, totalScore + prize);
+        alert(`😢 Du förlorade ${Math.abs(prize)} poäng...`);
+      }
+      saveData();
+      updateUI();
+      closeLuckyWheel();
+    }, 500);
+  }, randomDelay);
+}
+
+function closeLuckyWheel() {
+  document.getElementById('luckyWheelModal').classList.remove('active');
+}
+
 function startRace() {
   const betHorse = Number(document.getElementById("betHorse").value);
   const betAmount = Number(document.getElementById("betAmount").value);
@@ -554,8 +1127,8 @@ function startRace() {
   
   // Reset hästpositioner
   for(let i=1;i<=5;i++) {
-    document.getElementById("horse"+i).style.transform = "translateX(0px)";
-    document.getElementById("horse"+i).style.animation = "bounce 0.6s infinite";
+    document.getElementById("horse"+i).style.left = "10px";
+    document.getElementById("horse"+i).style.animation = "bounce 0.4s infinite";
   }
 
   let positions = [0,0,0,0,0];
@@ -588,12 +1161,12 @@ function startRace() {
       }
       
       const horse = document.getElementById("horse"+(i+1));
-      horse.style.transform = `translateX(${positions[i]}px)`;
+      horse.style.left = (10 + positions[i]) + 'px';
       
-      // Trail effect
-      if (raceDuration % 3 === 0) {
-        const colors = ['#667eea', '#764ba2', '#f093fb'];
-        createTrail(positions[i], i * 80 + 20, colors[i % 3]);
+      // Trail effect - visual indicator of movement
+      if (raceDuration % 2 === 0 && positions[i] > 0) {
+        const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#00d4ff'];
+        createTrail(10 + positions[i], 65, colors[i % colors.length]);
       }
       
       // Check if horse finished
@@ -615,24 +1188,48 @@ function startRace() {
         const winnerName = horseStats[winner].name;
         
         if(betHorse === winner){
-          totalScore += betAmount;
-          document.getElementById("message").textContent = `🎉🎊 GRATTIS! ${winnerName} vann! Du vann ${betAmount} poäng! 🥳`;
+          totalScore += Math.floor(betAmount * winMultiplier);
+          totalRacesWon++;
+          currentWinStreak++;
+          horseWins[winner]++;
+          playerXP += 10 + (currentWinStreak * 5); // More XP for streaks
+          
+          // Level up check
+          if (playerXP >= 100) {
+            playerLevel++;
+            playerXP = 0;
+            showFloatingMessage(`⬆️ LEVEL UP! LEVEL ${playerLevel}!`, '#44af69');
+          }
+          
+          document.getElementById("message").textContent = `🎉🎊 GRATTIS! ${winnerName} vann! Du vann ${Math.floor(betAmount * winMultiplier)} poäng! 🥳`;
           document.getElementById("message").style.color = "#27ae60";
           document.getElementById("score").className = "score win";
           playSound('win');
+          
+          if (betAmount >= 50) {
+            createConfetti();
+          }
+          
+          if (currentWinStreak >= 3) {
+            document.getElementById('luckyWheelBtn').style.display = 'inline-block';
+          }
           
           raceHistory.push({
             won: true,
             winnerName,
             horseNameBet: horseStats[betHorse].name,
-            amount: betAmount
+            amount: Math.floor(betAmount * winMultiplier)
           });
         } else {
           totalScore -= betAmount;
+          currentWinStreak = 0;
+          playerXP += 5; // Some XP even on loss
+          horseWins[winner]++;
           document.getElementById("message").textContent = `😢 Tyvärr... ${winnerName} vann. Du förlorade ${betAmount} poäng...`;
           document.getElementById("message").style.color = "#e74c3c";
           document.getElementById("score").className = "score loss";
           playSound('loss');
+          document.getElementById('luckyWheelBtn').style.display = 'none';
           
           raceHistory.push({
             won: false,
@@ -641,6 +1238,8 @@ function startRace() {
             amount: betAmount
           });
         }
+        
+        totalRacesPlayed++;
         
         // Update high score
         if (totalScore > highScore) {
@@ -681,6 +1280,7 @@ function resetRace() {
   for(let i=1;i<=5;i++) {
     document.getElementById("horse"+i).style.animation = "none";
     document.getElementById("flag"+i).style.animation = "none";
+    document.getElementById("horse"+i).style.left = "10px";
   }
   document.getElementById('score').className = 'score';
 }
