@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<title>Emoji Hästspel 🐴💨</title>
+<style>
+  body { font-family: Arial, sans-serif; text-align: center; background: #f0f8ff; }
+  h1 { color: #ff4500; }
+  .race-track { display: flex; flex-direction: column; align-items: flex-start; margin: 20px; }
+  .horse { font-size: 2rem; margin: 10px 0; transition: transform 0.5s; }
+  input[type="number"] { width: 80px; padding: 5px; margin: 5px; }
+  button { padding: 10px 20px; font-size: 1rem; cursor: pointer; background-color: #ff6347; color: white; border: none; border-radius: 5px; }
+  .message { margin-top: 20px; font-size: 1.2rem; }
+  .score { margin-top: 10px; font-size: 1rem; color: #006400; }
+</style>
+</head>
+<body>
+
+<h1>Emoji Hästspel 🐴💨</h1>
+
+<p>Satsa dina poäng på en häst (1–5):</p>
+<input type="number" id="betHorse" min="1" max="5" value="1">
+<input type="number" id="betAmount" min="1" value="10">
+<button onclick="startRace()">Starta loppet!</button>
+
+<div class="race-track">
+  <div class="horse" id="horse1">🐴</div>
+  <div class="horse" id="horse2">🐎</div>
+  <div class="horse" id="horse3">🦄</div>
+  <div class="horse" id="horse4">🦖</div>
+  <div class="horse" id="horse5">🐸</div>
+</div>
+
+<div class="message" id="message"></div>
+<div class="score" id="score">Poäng: 100</div>
+
+<script>
+let totalScore = 100;
+
+function startRace() {
+  const betHorse = Number(document.getElementById("betHorse").value);
+  const betAmount = Number(document.getElementById("betAmount").value);
+  if (betAmount > totalScore) {
+    alert("Du har inte tillräckligt med poäng!");
+    return;
+  }
+
+  document.getElementById("message").textContent = "Loppet pågår...";
+  
+  // Reset hästpositioner
+  for(let i=1;i<=5;i++) {
+    document.getElementById("horse"+i).style.transform = "translateX(0px)";
+  }
+
+  let positions = [0,0,0,0,0];
+  let interval = setInterval(() => {
+    let finished = false;
+    for(let i=0;i<5;i++){
+      positions[i] += Math.random()*30; // slumpad fart
+      document.getElementById("horse"+(i+1)).style.transform = `translateX(${positions[i]}px)`;
+      if (positions[i] >= 300) finished = true;
+    }
+    if(finished){
+      clearInterval(interval);
+      const winner = positions.indexOf(Math.max(...positions)) + 1;
+      if(betHorse === winner){
+        totalScore += betAmount;
+        document.getElementById("message").textContent = `Grattis! Häst ${winner} vann! Du vann ${betAmount} poäng 🎉`;
+      } else {
+        totalScore -= betAmount;
+        document.getElementById("message").textContent = `Tyvärr! Häst ${winner} vann. Du förlorade ${betAmount} poäng 😢`;
+      }
+      document.getElementById("score").textContent = `Poäng: ${totalScore}`;
+    }
+  }, 200);
+}
+</script>
+
+</body>
+</html>
